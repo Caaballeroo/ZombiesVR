@@ -1,0 +1,76 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+</head>
+
+<body>
+    <a-scene>
+        <a-plane position="0 0 -10" width="10" height="20" rotation="-90 0" color="#CCC"></a-plane>
+        
+        <!-- Varias cajas que seguirán al jugador -->
+        <a-box class="caja" position="0 0.5 -5" color="red"></a-box>
+        <a-box class="caja" position="2 0.5 -5" color="red"></a-box>
+        <a-box class="caja" position="4 0.5 -5" color="red"></a-box>
+        <a-box class="caja" position="-2 0.5 -5" color="red"></a-box>
+        <a-box class="caja" position="-4 0.5 -5" color="red"></a-box>
+        
+        <a-light type="ambient" color="#fff"></a-light>
+        
+        <a-camera id="player" position="0 1.6 0"></a-camera>
+    </a-scene>
+
+    <script>
+        // Obtener referencias a la cámara y a todas las cajas
+        const camera = document.querySelector("#player");
+        const boxes = document.querySelectorAll(".caja");
+
+        const boxSpeed = 0.04; // Velocidad de las cajas
+        const repulsionStrength = 0.05; // Fuerza de repulsión entre las cajas
+        const minDistance = 1.0; // Distancia mínima entre cajas
+
+        function updateBoxes() {
+            const cameraPosition = camera.object3D.position;
+
+            // Iterar sobre cada caja para moverla
+            boxes.forEach((box) => {
+                const boxPosition = box.object3D.position;
+
+                // Calcular la dirección hacia la cámara
+                const directionToCamera = new THREE.Vector3();
+                directionToCamera.subVectors(cameraPosition, boxPosition).normalize();
+
+                // Aplicar movimiento hacia el jugador
+                boxPosition.addScaledVector(directionToCamera, boxSpeed);
+
+                // Verificar colisiones con otras cajas y aplicar repulsión
+                boxes.forEach((otherBox) => {
+                    if (box === otherBox) return; // Saltar la misma caja
+
+                    const otherBoxPosition = otherBox.object3D.position;
+                    const distance = boxPosition.distanceTo(otherBoxPosition);
+
+                    if (distance < minDistance) {
+                        // Calcular la dirección de repulsión
+                        const repulsionDirection = new THREE.Vector3();
+                        repulsionDirection.subVectors(boxPosition, otherBoxPosition).normalize();
+
+                        // Aplicar fuerza de repulsión para evitar colisiones
+                        boxPosition.addScaledVector(repulsionDirection, repulsionStrength * (minDistance - distance));
+                    }
+                });
+            });
+
+            // Repetir en el siguiente frame
+            requestAnimationFrame(updateBoxes);
+        }
+
+        // Iniciar la actualización de posiciones
+        updateBoxes();
+    </script>
+</body>
+
+</html>

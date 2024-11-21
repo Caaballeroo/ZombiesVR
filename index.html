@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+</head>
+
+<body>
+    <a-scene obb-collider="showColliders: true">
+        <a-plane position="0 0 -10" width="10" height="20" rotation="-90 0" color="#CCC"></a-plane>
+        
+        <a-box id="caja" position="0 1 -5" obb-collider color="red"></a-box>
+        
+        <a-light type="ambient" color="#fff"></a-light>
+        
+        <!-- <a-camera id="player" position="0 1.6 0"></a-camera> -->
+        <a-camera id="player" position="0 1.6 0">
+            <a-cursor></a-cursor>
+            <!-- <a-text value="red" color="red" position="-0.3 1.2 -2" id="vida"></a-text>
+            <a-text value="5" color="red" position="2.9 1.5 -2" id="puntuacion"></a-text> -->
+        </a-camera>
+    </a-scene>
+
+    <script>
+        const camera = document.querySelector("#player");
+        const box = document.querySelector("#caja");
+
+        const boxSpeed = 0.03;
+
+        function updateBoxPosition() {
+            const cameraPosition = camera.object3D.position;
+            const boxPosition = box.object3D.position;
+
+            const direction = new THREE.Vector3();
+            direction.subVectors(cameraPosition, boxPosition).normalize();
+
+            boxPosition.addScaledVector(direction, boxSpeed);
+
+            requestAnimationFrame(updateBoxPosition);
+        }
+
+        updateBoxPosition();
+
+        var caja = document.getElementById("caja");
+
+            caja.addEventListener("click",function(event){
+            this.remove();
+        })
+
+    </script>
+</body>
+
+</html>
