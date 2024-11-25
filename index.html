@@ -3,10 +3,50 @@
 
 <head>
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="../../dist/aframe-super-shooter-kit.min.js"></script>
 </head>
+<script>
+    /**
+     * Click mouse to shoot.
+     */
+    AFRAME.registerComponent('click-to-shoot', {
+      init: function () {
+        document.body.addEventListener('mousedown', () => { this.el.emit('shoot'); });
+      }
+    });
 
+    /**
+     * Change color when hit.
+     */
+    AFRAME.registerComponent('hit-handler', {
+      dependencies: ['material'],
+
+      init: function () {
+        var color;
+        var el = this.el;
+
+        color = new THREE.Color();
+        color.set('#666');
+        el.components.material.material.color.copy(color);
+        el.addEventListener('hit', () => {
+          color.addScalar(0.05);
+          el.components.material.material.color.copy(color);
+        });
+
+        el.addEventListener('die', () => {
+          color.setRGB(1, 0, 0);
+          el.components.material.material.color.copy(color);
+        });
+      }
+    });
+  </script>
 <body>
     <a-scene obb-collider="showColliders: true">
+        <a-entity bullet="name: normal; speed: 30.0; poolSize: 20" geometry="primitive: icosahedron; radius: 0.1;" material="color: black; emissiveIntensity: 0.5; emissive: black"></a-entity>
+
+        <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" click-to-shoot position="0 1 -1"></a-entity>
+
+
         <a-plane position="0 0 -10" width="10" height="20" rotation="-90 0" color="#CCC"></a-plane>
         
         <a-box id="caja" position="0 1 -5" obb-collider color="red"></a-box>
