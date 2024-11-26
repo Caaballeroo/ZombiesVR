@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame VR Joystick Movement</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-locomotion@0.2.0/dist/aframe-locomotion.umd.min.js"></script>
+
+</head>
+<body>
+    <a-scene>
+
+        <!-- Camera rig -->
+        <a-entity id="rig">
+            <a-camera id="camera"></a-camera>
+
+            <!-- Hands -->
+            <a-entity
+                hand-controls="hand: left"
+                smooth-locomotion="target: #rig; reference: #camera">
+            </a-entity>
+            <a-entity
+                hand-controls="hand: right"
+                snap-turn="target: #rig; reference: #camera">
+            </a-entity>
+        </a-entity>
+
+
+        <!-- Entorno -->
+        <a-sky color="#ECECEC"></a-sky>
+        <a-plane rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+
+        <!-- Objetos de prueba -->
+        <a-box position="0 0.5 -3" color="#4CC3D9"></a-box>
+        <a-sphere position="2 1 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+        <a-cylinder position="-1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+
+    </a-scene>
+</body>
+</html>
