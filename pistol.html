@@ -9,7 +9,7 @@
      */
     AFRAME.registerComponent('click-to-shoot', {
       init: function () {
-        document.body.addEventListener('triggerdown', () => { this.el.emit('shoot'); });
+        document.body.addEventListener('click', () => { this.el.emit('shoot'); });
       }
     });
 

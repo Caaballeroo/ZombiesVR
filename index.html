@@ -10,6 +10,9 @@
     /**
      * Click mouse to shoot.
      */
+     document.querySelector('a-scene').addEventListener('enter-vr', function(){
+
+     });
     AFRAME.registerComponent('click-to-shoot', {
       init: function () {
         document.body.addEventListener('triggerdown', () => { this.el.emit('shoot'); });
@@ -49,48 +52,75 @@
 
         <!-- Hands -->
         <a-entity wasd-controls oculus-touch-controls="hand: left" smooth-locomotion="target: #rig; reference: #player"></a-entity>
-        <a-entity oculus-touch-controls="hand: right" snap-turn="target: #rig; reference: #player">
-          <a-entity id="gun" shooter geometry="primitive: box; width: 0.1; height: 0.1; depth: 0.3" material="color: red" click-to-shoot position="0 0 0"></a-entity>
+        <a-entity id="manoderecha" oculus-touch-controls="hand: right; model: false" snap-turn="target: #rig; reference: #player">
+          <a-entity id="gun" shooter click-to-shoot position="0 0 0">
+            <a-entity id="gun" position="0 0 0" rotation="0 180">
+              <!-- Cuerpo de la pistola -->
+              <a-box width="0.1" height="0.05" depth="0.3" material="color: black"></a-box>
+            
+              <!-- Empuñadura -->
+              <a-box width="0.07" height="0.15" depth="0.05" position="0 -0.09 -0.11" rotation="15 0 0" material="color: darkgray"></a-box>
+            
+              <!-- Gatillo -->
+              <a-cylinder radius="0.01" height="0.05" position="0 -0.05 -0.04" rotation="0 0 0" material="color: gray"></a-cylinder>
+            
+              <!-- Cañón -->
+              <a-box width="0.07" height="0.05" depth="0.15" position="0 0 0.21" material="color: black"></a-box>
+            
+              <!-- Detalle en la punta del cañón -->
+              <a-cylinder radius="0.02" height="0.02" position="0 0 0.29" rotation="90 0 0" material="color: gray"></a-cylinder>
+            
+              <!-- Mira frontal -->
+              <a-cone radius-bottom="0.005" radius-top="0" height="0.03" position="0 0.03 0.25" material="color: red"></a-cone>
+            
+              <!-- Mira trasera -->
+              <a-box width="0.02" height="0.01" depth="0.01" position="0 0.03 -0.1" material="color: red"></a-box>
+            </a-entity>
+          </a-entity>
         </a-entity>
       </a-entity>
 
       <a-entity bullet="name: normal; speed: 30.0; poolSize: 20" geometry="primitive: icosahedron; radius: 0.1;" material="color: black; emissiveIntensity: 0.5; emissive: black"></a-entity>
 
-
         <a-plane position="0 0 -10" width="10" height="20" rotation="-90 0" color="#CCC"></a-plane>
-        
+        <!-- <a-box id="caja" position="0 0.5 -5" color="red"></a-box> -->
         <a-entity id="caja" class="target" target="healthPoints: 10" geometry="primitive: box" material="color: teal" position="0 0 -4" hit-handler></a-entity>
         
         <a-light type="ambient" color="#fff"></a-light>
     </a-scene>
 
     <script>
-        const camera = document.querySelector("#player");
-        const box = document.querySelector("#caja");
-
-        const boxSpeed = 0.03;
-
-        function updateBoxPosition() {
-            const cameraPosition = camera.object3D.position;
-            const boxPosition = box.object3D.position;
-
-            const direction = new THREE.Vector3();
-            direction.subVectors(cameraPosition, boxPosition).normalize();
-
-            boxPosition.addScaledVector(direction, boxSpeed);
-
-            requestAnimationFrame(updateBoxPosition);
-        }
-
-        updateBoxPosition();
-
-        var caja = document.getElementById("caja");
-
-            caja.addEventListener("click",function(event){
-            this.remove();
-        })
-
-    </script>
+      const camera = document.querySelector("#player");
+      const box = document.querySelector("#caja");
+  
+      const boxSpeed = 0.02; // Velocidad de la caja
+  
+      function updateBoxPosition() {
+          const cameraWorldPosition = new THREE.Vector3();
+          camera.object3D.getWorldPosition(cameraWorldPosition); // Obtiene la posición actual del jugador en el mundo
+  
+          const boxPosition = box.object3D.position;
+  
+          // Calcula la dirección hacia la cámara
+          const direction = new THREE.Vector3();
+          direction.subVectors(cameraWorldPosition, boxPosition).normalize();
+  
+          // Mueve la caja hacia el jugador
+          boxPosition.addScaledVector(direction, boxSpeed);
+  
+          // Solicita el siguiente cuadro
+          requestAnimationFrame(updateBoxPosition);
+      }
+  
+      // Inicia el movimiento de la caja
+      updateBoxPosition();
+  
+      // Elimina la caja al hacer clic en ella
+      box.addEventListener("click", function () {
+          this.remove();
+      });
+  </script>
+  
 </body>
 
 </html>
